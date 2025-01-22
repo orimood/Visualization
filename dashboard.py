@@ -1,16 +1,3 @@
-import subprocess
-import sys
-
-# Function to check and install packages silently
-def check_and_install(package_name):
-    try:
-        __import__(package_name)
-    except ImportError:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", package_name])
-
-# Check and install required packages
-check_and_install("plotly")
-check_and_install("matplotlib")
 import streamlit as st
 import pandas as pd
 import pydeck as pdk
