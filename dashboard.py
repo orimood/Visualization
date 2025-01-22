@@ -1,9 +1,11 @@
+import os
 import streamlit as st
 import pandas as pd
 import pydeck as pdk
 import plotly.express as px
 import matplotlib.pyplot as plt
 import calendar
+from tqdm import tqdm
 
 # 1) ------------ CONFIGURE PAGE + WIDER SIDEBAR -------------
 # Automatically use wide layout
@@ -24,13 +26,33 @@ st.markdown(
 
 # 2) ------------- CACHING / LOAD DATA FUNCTIONS -------------
 @st.cache_data
-def load_bus_data(csv_path="ready_data.csv"):
+def load_bus_data(folder_path="bus_data_splits"):
     """
     Load and preprocess bus route data.
     """
-    df = pd.read_csv(csv_path, encoding="utf-8")
-    # Exclude self-loops
-    df = df[df["origin_yishuv_nm"] != df["destination_yishuv_nm"]]
+    
+    
+    def merge_csvs(input_folder):
+        """
+        Merge all CSV files in a folder into a single DataFrame.
+        
+        Args:
+            input_folder (str): Directory containing the CSV files to merge.
+        
+        Returns:
+            pd.DataFrame: Combined DataFrame with all data from the smaller CSV files.
+        """
+        all_files = [os.path.join(input_folder, f) for f in os.listdir(input_folder) if f.endswith('.csv')]
+        combined_data = []
+
+        for file in tqdm(all_files, desc="Merging CSVs"):
+            df = pd.read_csv(file)
+            combined_data.append(df)
+        
+        merged_df = pd.concat(combined_data, ignore_index=True)
+        return merged_df
+
+    df = merge_csvs(folder_path)
     return df
 
 
@@ -57,7 +79,7 @@ def show_bus_routes_connectivity():
     # -- Hideable filters for bus routes
     with st.expander("Filters (Bus Routes)", expanded=False):
         # Load bus data once (cached)
-        df = load_bus_data("ready_data.csv")
+        df = load_bus_data("bus_data_splits")
 
         selected_years = st.multiselect(
             "Select Year(s):",
@@ -163,7 +185,7 @@ def show_bus_routes_connectivity():
     )
 
     # Make the chart bigger by specifying a height
-    st.pydeck_chart(deck, use_container_width=True, height=800)
+    st.pydeck_chart(deck, use_container_width=True)
 
     # -- Key Insights Section (under the graph) --
     st.markdown("<h2 style='color: #9ACD32;'>Key Insights for the Bus Routes Connectivity</h2>", unsafe_allow_html=True)
@@ -320,9 +342,13 @@ def show_train_ridership_events():
         # Load the same train data (cached)
         data = load_train_data("timetable_train_database_preproccesed.csv")
 
-        # Remove entries where `train_station_nm` starts with "לא ידוע"
-        data = data[~data['train_station_nm'].str.startswith("לא ידוע")]
-
+     
+        # Filter out rows with dates later than September 2024
+        data = data[
+            (data['shana'] < 2024) |
+            ((data['shana'] == 2024) & (data['hodesh'] <= 9))
+        ]
+        
         # 1. City Filter (default to שדרות, if it exists; otherwise 'All')
         station_options = ["All"] + data['train_station_nm'].unique().tolist()
         default_city_index = 0
@@ -617,7 +643,7 @@ This reveals how often trains are on time, early, or delayed.
         )
         show_train_status_analysis()
 
-    elif graph_option == "Train Ridership Over Time (Events)":
+    elif graph_option == "Train Ridership Over Time":
         # --- Sidebar Explanation for Train Ridership ---
         st.sidebar.markdown("<hr style='border: 1px solid #9370DB;'/>", unsafe_allow_html=True)
         st.sidebar.markdown("<h2 style='color: #6A5ACD;'>About the Train Ridership Dashboard 📈</h2>",
