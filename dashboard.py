@@ -5,7 +5,6 @@ import pydeck as pdk
 import plotly.express as px
 import matplotlib.pyplot as plt
 import calendar
-from tqdm import tqdm
 
 # 1) ------------ CONFIGURE PAGE + WIDER SIDEBAR -------------
 # Automatically use wide layout
@@ -22,6 +21,40 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
+
+def load_bus_data(folder_path="bus_data_splits"):
+    """
+    Load and preprocess bus route data by merging all CSV files in the specified folder.
+
+    Args:
+        folder_path (str): Path to the folder containing CSV files. Default is "bus_data_splits".
+
+    Returns:
+        pd.DataFrame: Combined DataFrame with all data from the smaller CSV files.
+    """
+    def merge_csvs(input_folder):
+        """
+        Merge all CSV files in a folder into a single DataFrame.
+
+        Args:
+            input_folder (str): Directory containing the CSV files to merge.
+
+        Returns:
+            pd.DataFrame: Combined DataFrame with all data from the smaller CSV files.
+        """
+        all_files = [os.path.join(input_folder, f) for f in os.listdir(input_folder) if f.endswith('.csv')]
+        combined_data = []
+
+        for file in all_files:
+            df = pd.read_csv(file)
+            combined_data.append(df)
+
+        merged_df = pd.concat(combined_data, ignore_index=True)
+        return merged_df
+
+    df = merge_csvs(folder_path)
+    return df
 
 
 # 2) ------------- CACHING / LOAD DATA FUNCTIONS -------------
