@@ -23,6 +23,11 @@ st.markdown(
 )
 
 
+
+
+
+# 2) ------------- CACHING / LOAD DATA FUNCTIONS -------------
+@st.cache_data
 def load_bus_data(folder_path="bus_data_splits"):
     """
     Load and preprocess bus route data by merging all CSV files in the specified folder.
@@ -55,39 +60,6 @@ def load_bus_data(folder_path="bus_data_splits"):
 
     df = merge_csvs(folder_path)
     return df
-
-
-# 2) ------------- CACHING / LOAD DATA FUNCTIONS -------------
-@st.cache_data
-def load_bus_data(folder_path="bus_data_splits"):
-    """
-    Load and preprocess bus route data.
-    """
-    
-    
-    def merge_csvs(input_folder):
-        """
-        Merge all CSV files in a folder into a single DataFrame.
-        
-        Args:
-            input_folder (str): Directory containing the CSV files to merge.
-        
-        Returns:
-            pd.DataFrame: Combined DataFrame with all data from the smaller CSV files.
-        """
-        all_files = [os.path.join(input_folder, f) for f in os.listdir(input_folder) if f.endswith('.csv')]
-        combined_data = []
-
-        for file in tqdm(all_files, desc="Merging CSVs"):
-            df = pd.read_csv(file)
-            combined_data.append(df)
-        
-        merged_df = pd.concat(combined_data, ignore_index=True)
-        return merged_df
-
-    df = merge_csvs(folder_path)
-    return df
-
 
 @st.cache_data
 def load_train_data(csv_path="timetable_train_database_preproccesed.csv"):
