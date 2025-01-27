@@ -577,6 +577,20 @@ def show_introduction():
         unsafe_allow_html=True
     )
 
+    st.sidebar.markdown(
+        """
+        - **🚍 Bus Routes Connectivity**:  
+          Explore how Israeli cities are connected by bus routes, with visualizations highlighting top routes and their frequency.
+        
+        - **🚂 Train Status Analysis**:  
+          Analyze train schedule adherence (on-time, delayed, or early departures) across various stations.
+        
+        - **📈 Train Ridership Over Time**:  
+          Investigate the impact of major events (e.g., COVID, war, repairs) on monthly train ridership trends.
+        """,
+        unsafe_allow_html=True
+    )
+
 
 
 # 6) ------------- MAIN APP -------------
