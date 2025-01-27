@@ -13,16 +13,19 @@ st.set_page_config(layout="wide")
 st.markdown(
     """
     <style>
-    /* Ensure the entire Streamlit main content is centered */
+    /* Main content container */
     [data-testid="stAppViewContainer"] {
-        display: flex;
-        flex-direction: column;
-        align-items: center; /* Center content horizontally */
-        justify-content: flex-start; /* Align content to the top */
-        padding: 0;
+        transition: margin-left 0.3s ease; /* Smooth transition when sidebar is toggled */
     }
 
-    /* Center charts specifically */
+    /* Apply centered alignment when sidebar is collapsed */
+    [data-testid="collapsedSidebar"] + div [data-testid="stAppViewContainer"] {
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 80%; /* Limit the width for better centering */
+    }
+
+    /* Ensure charts are centered */
     [data-testid="stChart"] {
         margin: 0 auto; /* Center align charts */
     }
