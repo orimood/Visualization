@@ -10,17 +10,27 @@ import calendar
 # Automatically use wide layout
 st.set_page_config(layout="wide")
 
-# Make the sidebar wider (adjust min-width to your liking):
 st.markdown(
     """
     <style>
-    [data-testid="stSidebar"] {
-        min-width: 350px; /* Adjust as needed */
+    /* Ensure the entire Streamlit main content is centered */
+    [data-testid="stAppViewContainer"] {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Center content horizontally */
+        justify-content: flex-start; /* Align content to the top */
+        padding: 0;
+    }
+
+    /* Center charts specifically */
+    [data-testid="stChart"] {
+        margin: 0 auto; /* Center align charts */
     }
     </style>
     """,
     unsafe_allow_html=True
 )
+
 
 
 
