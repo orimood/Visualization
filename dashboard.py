@@ -160,12 +160,14 @@ def show_bus_routes_connectivity():
         )
 
     # Button to re-center the camera
+    # 1) Update the existing view state properties
+    # 2) Force a re-run so it refreshes if pressed multiple times
     if st.button("Re-center Camera"):
-        # Update the existing view state directly instead of recreating it
         st.session_state.view_state.latitude = origin_lat
         st.session_state.view_state.longitude = origin_lon
         st.session_state.view_state.zoom = 10
         st.session_state.view_state.pitch = 2
+        st.experimental_rerun()  # << Forces a fresh render, so it works multiple times
 
     # ArcLayer
     arc_layer = pdk.Layer(
@@ -226,6 +228,7 @@ def show_bus_routes_connectivity():
 - **🌐 Regional Disparities**: Cities in remote areas may have fewer connections, indicating potential gaps.
 """
     )
+
 
 
 
