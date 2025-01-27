@@ -94,11 +94,16 @@ def show_bus_routes_connectivity():
         "### What are the most connected cities in Israel, and is there a strong dependency on specific transportation hubs?"
     )
 
-    # -- Hideable filters for bus routes
+    # Store the selected city in session_state for the "Go Back" button functionality
+    if "selected_city" not in st.session_state:
+        st.session_state.selected_city = None
+
+    # Hideable filters for bus routes
     with st.expander("Filters (Bus Routes)", expanded=False):
         # Load bus data once (cached)
         df = load_bus_data("bus_data_splits")
 
+        # Multi-select for years
         selected_years = st.multiselect(
             "Select Year(s):",
             sorted(df["year"].unique()),
@@ -111,8 +116,20 @@ def show_bus_routes_connectivity():
         # Filter by selected years
         df_filtered = df[df["year"].isin(selected_years)]
 
+        # Dropdown for origin cities
         origin_cities = sorted(df_filtered["origin_yishuv_nm"].unique())
-        selected_origin = st.selectbox("Select Origin City:", origin_cities)
+
+        # Display the "Go Back" button if a city was previously selected
+        if st.session_state.selected_city and st.session_state.selected_city in origin_cities:
+            if st.button(f"Go Back to {st.session_state.selected_city}"):
+                selected_origin = st.session_state.selected_city
+            else:
+                selected_origin = st.selectbox("Select Origin City:", origin_cities)
+        else:
+            selected_origin = st.selectbox("Select Origin City:", origin_cities)
+
+        # Save the selected city to session_state
+        st.session_state.selected_city = selected_origin
 
     # Filter by chosen origin city
     df_city = df_filtered[df_filtered["origin_yishuv_nm"] == selected_origin]
@@ -205,7 +222,7 @@ def show_bus_routes_connectivity():
     # Make the chart bigger by specifying a height
     st.pydeck_chart(deck, use_container_width=True)
 
-    # -- Key Insights Section (under the graph) --
+    # Key Insights Section
     st.markdown("<h2 style='color: #9ACD32;'>Key Insights for the Bus Routes Connectivity</h2>", unsafe_allow_html=True)
     st.markdown(
         """
@@ -215,6 +232,7 @@ def show_bus_routes_connectivity():
 - **🌐 Regional Disparities**: Cities in remote areas may have fewer connections, indicating potential gaps.
 """
     )
+
 
 
 # 4) ------------- VISUALIZATION #2: TRAIN STATUS ANALYSIS -------------
