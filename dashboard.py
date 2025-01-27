@@ -94,16 +94,11 @@ def show_bus_routes_connectivity():
         "### What are the most connected cities in Israel, and is there a strong dependency on specific transportation hubs?"
     )
 
-    # Store the selected city in session_state for the "Go Back" button functionality
-    if "selected_city" not in st.session_state:
-        st.session_state.selected_city = None
+    # Load bus data once (cached)
+    df = load_bus_data("bus_data_splits")
 
-    # Hideable filters for bus routes
+    # Filters for bus routes
     with st.expander("Filters (Bus Routes)", expanded=False):
-        # Load bus data once (cached)
-        df = load_bus_data("bus_data_splits")
-
-        # Multi-select for years
         selected_years = st.multiselect(
             "Select Year(s):",
             sorted(df["year"].unique()),
@@ -116,20 +111,8 @@ def show_bus_routes_connectivity():
         # Filter by selected years
         df_filtered = df[df["year"].isin(selected_years)]
 
-        # Dropdown for origin cities
         origin_cities = sorted(df_filtered["origin_yishuv_nm"].unique())
-
-        # Display the "Go Back" button if a city was previously selected
-        if st.session_state.selected_city and st.session_state.selected_city in origin_cities:
-            if st.button(f"Go Back to {st.session_state.selected_city}"):
-                selected_origin = st.session_state.selected_city
-            else:
-                selected_origin = st.selectbox("Select Origin City:", origin_cities)
-        else:
-            selected_origin = st.selectbox("Select Origin City:", origin_cities)
-
-        # Save the selected city to session_state
-        st.session_state.selected_city = selected_origin
+        selected_origin = st.selectbox("Select Origin City:", origin_cities)
 
     # Filter by chosen origin city
     df_city = df_filtered[df_filtered["origin_yishuv_nm"] == selected_origin]
@@ -165,13 +148,23 @@ def show_bus_routes_connectivity():
     origin_lat = df_top15.iloc[0]["lat_origin"]
     origin_lon = df_top15.iloc[0]["lon_origin"]
 
-    # Define the view state
-    view_state = pdk.ViewState(
-        latitude=origin_lat,
-        longitude=origin_lon,
-        zoom=10,
-        pitch=2
-    )
+    # Initialize the view state
+    if "view_state" not in st.session_state:
+        st.session_state.view_state = pdk.ViewState(
+            latitude=origin_lat,
+            longitude=origin_lon,
+            zoom=10,
+            pitch=2
+        )
+
+    # Button to re-center the camera
+    if st.button("Re-center Camera"):
+        st.session_state.view_state = pdk.ViewState(
+            latitude=origin_lat,
+            longitude=origin_lon,
+            zoom=10,
+            pitch=2
+        )
 
     # ArcLayer
     arc_layer = pdk.Layer(
@@ -208,7 +201,7 @@ def show_bus_routes_connectivity():
     # Create the deck
     deck = pdk.Deck(
         layers=[arc_layer, destination_layer, origin_layer],
-        initial_view_state=view_state,
+        initial_view_state=st.session_state.view_state,
         map_style="mapbox://styles/mapbox/dark-v10",
         tooltip={
             "html": (
@@ -232,6 +225,7 @@ def show_bus_routes_connectivity():
 - **🌐 Regional Disparities**: Cities in remote areas may have fewer connections, indicating potential gaps.
 """
     )
+
 
 
 
