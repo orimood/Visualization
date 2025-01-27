@@ -112,8 +112,6 @@ def show_bus_routes_connectivity():
         df_filtered = df[df["year"].isin(selected_years)]
 
         origin_cities = sorted(df_filtered["origin_yishuv_nm"].unique())
-
-        # Dropdown for selecting origin city
         selected_origin = st.selectbox("Select Origin City:", origin_cities)
 
     # Filter by chosen origin city
@@ -150,7 +148,7 @@ def show_bus_routes_connectivity():
     origin_lat = df_top15.iloc[0]["lat_origin"]
     origin_lon = df_top15.iloc[0]["lon_origin"]
 
-    # Initialize view state in session state for persistence
+    # 1. Initialize camera & map-key in session_state if not present
     if "view_state" not in st.session_state:
         st.session_state.view_state = pdk.ViewState(
             latitude=origin_lat,
@@ -158,18 +156,18 @@ def show_bus_routes_connectivity():
             zoom=10,
             pitch=2
         )
+    if "map_key" not in st.session_state:
+        st.session_state.map_key = 0  # used to force re-render
 
-    # Button to re-center the camera
-    # 1) Update the existing view state properties
-    # 2) Force a re-run so it refreshes if pressed multiple times
+    # 2. Re-center button updates the camera and changes the map_key
     if st.button("Re-center Camera"):
         st.session_state.view_state.latitude = origin_lat
         st.session_state.view_state.longitude = origin_lon
         st.session_state.view_state.zoom = 10
         st.session_state.view_state.pitch = 2
-        st.experimental_rerun()  # << Forces a fresh render, so it works multiple times
+        st.session_state.map_key += 1
 
-    # ArcLayer
+    # 3. Create the ArcLayer, Destination Layer, Origin Layer
     arc_layer = pdk.Layer(
         "ArcLayer",
         data=df_top15,
@@ -181,7 +179,6 @@ def show_bus_routes_connectivity():
         pickable=True
     )
 
-    # Destination Layer
     destination_layer = pdk.Layer(
         "ScatterplotLayer",
         data=df_top15,
@@ -191,7 +188,6 @@ def show_bus_routes_connectivity():
         pickable=True
     )
 
-    # Origin Layer
     origin_layer = pdk.Layer(
         "ScatterplotLayer",
         data=df_top15.head(1),
@@ -201,7 +197,7 @@ def show_bus_routes_connectivity():
         pickable=True
     )
 
-    # Create the deck
+    # 4. Create the deck using the current view_state
     deck = pdk.Deck(
         layers=[arc_layer, destination_layer, origin_layer],
         initial_view_state=st.session_state.view_state,
@@ -215,8 +211,9 @@ def show_bus_routes_connectivity():
         }
     )
 
-    # Display the map
-    st.pydeck_chart(deck, use_container_width=True)
+    # 5. Display the map with a dynamic key
+    # Changing st.session_state.map_key forces a new chart instance, re-rendering the map
+    st.pydeck_chart(deck, use_container_width=True, key=f"my_map_{st.session_state.map_key}")
 
     # Key Insights Section
     st.markdown("<h2 style='color: #9ACD32;'>Key Insights for the Bus Routes Connectivity</h2>", unsafe_allow_html=True)
@@ -228,9 +225,6 @@ def show_bus_routes_connectivity():
 - **🌐 Regional Disparities**: Cities in remote areas may have fewer connections, indicating potential gaps.
 """
     )
-
-
-
 
 
 
