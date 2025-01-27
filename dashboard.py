@@ -159,7 +159,7 @@ def show_bus_routes_connectivity():
             pitch=2
         )
 
-    # Re-center button (placed above the map)
+    # Re-center the camera to the selected city when the button is pressed
     if st.button("Re-center Camera"):
         st.session_state.view_state = pdk.ViewState(
             latitude=origin_lat,
@@ -214,7 +214,7 @@ def show_bus_routes_connectivity():
         }
     )
 
-    # Place the map
+    # Display the map
     st.pydeck_chart(deck, use_container_width=True)
 
     # Key Insights Section
