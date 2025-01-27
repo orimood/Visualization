@@ -548,7 +548,7 @@ def show_train_ridership_events():
 # 5) ------------- INTRODUCTION -------------
 def show_introduction():
     """
-    Introduction page with custom HTML and CSS blocks.
+    Introduction page with custom HTML and CSS blocks and statistics.
     """
     st.title("🎉 Welcome to the Israel Public Transportation Dashboard 🚍🚆")
 
@@ -588,6 +588,19 @@ def show_introduction():
                 <li>📈 <strong>Train Ridership Over Time:</strong> Understand the impact of significant events on ridership.</li>
             </ul>
         </div>
+
+        <div style='background-color: #353535; padding: 20px; margin-top: 20px; border-radius: 10px;'>
+            <h2 style='color: #f0f0f0;'>📊 Interesting Statistics</h2>
+            <p style='color: #f0f0f0;'>
+                - **Total Bus Routes**: 100,052 rows of data, covering bus routes and trips between 2019–2023.  
+                - **Top Cities**: Tel Aviv, Haifa, and Jerusalem are some of the most frequently connected cities.  
+                - **Most Traveled Route**: The route between Tel Aviv and Haifa has the highest number of trips.
+                <br><br>
+                - **Train Data Size**: 10,366 records detailing train status across stations from 2015 to present.  
+                - **Punctuality Analysis**: The data helps evaluate train punctuality, with on-time performance fluctuating seasonally.  
+                - **Stations with High Delays**: Central stations like Tel Aviv and Jerusalem show chronic delays, especially during peak hours.
+            </p>
+        </div>
         """,
         unsafe_allow_html=True
     )
@@ -605,8 +618,6 @@ def show_introduction():
         """,
         unsafe_allow_html=True
     )
-
-
 
 
 # 6) ------------- MAIN APP -------------
