@@ -548,7 +548,7 @@ def show_train_ridership_events():
 # 5) ------------- INTRODUCTION -------------
 def show_introduction():
     """
-    Introduction page with custom HTML and CSS blocks and statistics.
+    Introduction page with custom HTML and CSS blocks and detailed data overview.
     """
     st.title("🎉 Welcome to the Israel Public Transportation Dashboard 🚍🚆")
 
@@ -560,46 +560,54 @@ def show_introduction():
             focusing on <span style='color: #f39c12;'>bus routes connectivity</span>, 
             <span style='color: #27ae60;'>train status analysis</span>, 
             and <span style='color: #9b59b6;'>train ridership trends</span>.</p>
-        </div>
-
-        <div style='background-color: #353535; padding: 20px; margin-top: 20px; border-radius: 10px;'>
-            <h2 style='color: #e74c3c;'>🎯 Purpose</h2>
+            <p style='color: #f0f0f0;'>
+            Our project aims to analyze Israel's public transportation system in depth, focusing on buses and trains, to uncover trends and challenges affecting efficiency and reliability. We use interactive visualizations to highlight key insights, such as:
+            </p>
             <ul style='color: #f0f0f0;'>
-                <li>📊 <strong>Identify key insights</strong> into public transportation patterns.</li>
-                <li>🔍 <strong>Highlight areas for improvement</strong> in schedule adherence and ridership.</li>
-                <li>🛠 <strong>Provide tools</strong> for analyzing connectivity and usage trends.</li>
+                <li>🚍 Identifying the most connected cities and their dependency on transportation hubs.</li>
+                <li>⏱️ Evaluating schedule adherence to find areas needing improvement.</li>
+                <li>📈 Analyzing the impact of significant events (e.g., COVID, war) on train ridership over time.</li>
             </ul>
         </div>
 
-        <div style='background-color: #2f3640; padding: 20px; margin-top: 20px; border-radius: 10px;'>
-            <h2 style='color: #e84393;'>📖 How to Use</h2>
+        <div style='background-color: #353535; padding: 20px; margin-top: 20px; border-radius: 10px;'>
+            <h2 style='color: #e84393;'>📊 Interesting Statistics</h2>
             <ul style='color: #f0f0f0;'>
-                <li>🗺 Use the <strong>sidebar navigation</strong> to explore different visualizations.</li>
-                <li>⚙ Apply <strong>filters</strong> to customize the data and focus on areas of interest.</li>
-                <li>ℹ <strong>Hover over charts</strong> and maps to view additional information.</li>
+                <li><strong>Total Bus Routes:</strong> 100,052 rows of data, covering bus routes and trips from 2019 to 2023.</li>
+                <li><strong>Most Connected Cities:</strong> Tel Aviv, Haifa, and Jerusalem are among the most connected urban centers.</li>
+                <li><strong>Top Bus Route:</strong> The route between Tel Aviv and Haifa has the highest number of trips recorded.</li>
+                <li><strong>Train Data:</strong> 10,366 records spanning 2015 to the present, with detailed train statuses (on-time, delayed, early).</li>
+                <li><strong>Delay Insights:</strong> Central stations like Tel Aviv and Jerusalem show recurring delays during peak hours.</li>
             </ul>
         </div>
 
         <div style='background-color: #222f3e; padding: 20px; margin-top: 20px; border-radius: 10px;'>
-            <h2 style='color: #6c5ce7;'>📌 Key Visualizations</h2>
-            <ul style='color: #f0f0f0;'>
-                <li>🚍 <strong>Bus Routes Connectivity:</strong> Explore the most connected cities and transportation hubs.</li>
-                <li>🚉 <strong>Train Status Analysis:</strong> Evaluate adherence to schedules across train stations.</li>
-                <li>📈 <strong>Train Ridership Over Time:</strong> Understand the impact of significant events on ridership.</li>
-            </ul>
-        </div>
-
-        <div style='background-color: #353535; padding: 20px; margin-top: 20px; border-radius: 10px;'>
-            <h2 style='color: #f0f0f0;'>📊 Interesting Statistics</h2>
+            <h2 style='color: #6c5ce7;'>📖 Data Overview</h2>
             <p style='color: #f0f0f0;'>
-                - **Total Bus Routes**: 100,052 rows of data, covering bus routes and trips between 2019–2023.  
-                - **Top Cities**: Tel Aviv, Haifa, and Jerusalem are some of the most frequently connected cities.  
-                - **Most Traveled Route**: The route between Tel Aviv and Haifa has the highest number of trips.
-                <br><br>
-                - **Train Data Size**: 10,366 records detailing train status across stations from 2015 to present.  
-                - **Punctuality Analysis**: The data helps evaluate train punctuality, with on-time performance fluctuating seasonally.  
-                - **Stations with High Delays**: Central stations like Tel Aviv and Jerusalem show chronic delays, especially during peak hours.
+            To address our research questions, we used two datasets obtained from the official Israeli data agency (<a style='color: #f4d03f;' href='https://data.gov.il/' target='_blank'>data.gov.il</a>):
             </p>
+            <ul style='color: #f0f0f0;'>
+                <li>
+                    <strong>Bus Dataset:</strong> 
+                    Originally consisting of 100,052 rows and 5 columns, this dataset was split into smaller files due to size limitations. It spans the years <strong>2019–2023</strong> and includes:
+                    <ul>
+                        <li>🗺️ Origin and destination cities.</li>
+                        <li>🚍 Total trips between cities (<strong>trips_count</strong>).</li>
+                        <li>📍 Geographical coordinates (latitude and longitude) of each route's start and end points.</li>
+                    </ul>
+                    This dataset provides insights into route frequency, regional connectivity, and urban-rural transit disparities.
+                </li>
+                <li>
+                    <strong>Train Dataset:</strong> 
+                    Containing 10,366 rows and 5 columns, this dataset spans from <strong>2015 to the present</strong> and focuses on train station statuses. It includes:
+                    <ul>
+                        <li>🚉 Station names and monthly operational data.</li>
+                        <li>⏱️ Train status categories: <strong>on-time</strong>, <strong>delayed</strong>, or <strong>early</strong>.</li>
+                        <li>📊 Total occurrences for each status by station, month, and year.</li>
+                    </ul>
+                    This dataset allows for a detailed analysis of punctuality, station-specific performance, and long-term operational trends.
+                </li>
+            </ul>
         </div>
         """,
         unsafe_allow_html=True
@@ -618,6 +626,7 @@ def show_introduction():
         """,
         unsafe_allow_html=True
     )
+
 
 
 # 6) ------------- MAIN APP -------------
