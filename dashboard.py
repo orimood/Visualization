@@ -691,7 +691,32 @@ A line chart displays monthly ridership with annotations for noteworthy events.
         show_train_ridership_events()
 
     elif graph_option == "Introduction":
-        show_introduction()
+    # Sidebar title
+        st.sidebar.markdown("<h1 style='color: #FFA07A;'>🔎 Navigation</h1>", unsafe_allow_html=True)
+        
+        # Sidebar buttons for each visualization with explanations
+        if st.sidebar.button("Bus Routes Connectivity"):
+            st.sidebar.markdown(
+                "🚌 Explore the connectivity between cities in Israel based on bus routes. "
+                "Identify major hubs and dependencies on specific routes."
+            )
+            show_bus_routes_connectivity()
+        elif st.sidebar.button("Train Status Analysis"):
+            st.sidebar.markdown(
+                "🚂 Analyze train schedule adherence across Israel's stations. "
+                "Find stations with delays, early departures, or consistent on-time performance."
+            )
+            show_train_status_analysis()
+        elif st.sidebar.button("Train Ridership Over Time"):
+            st.sidebar.markdown(
+                "📈 Examine monthly train ridership trends in Israel. "
+                "Understand the impact of major events like COVID-19 and infrastructure repairs."
+            )
+            show_train_ridership_events()
+        else:
+            show_introduction()
+    
+            show_introduction()
 
 
 if __name__ == "__main__":
