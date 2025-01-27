@@ -159,8 +159,9 @@ def show_bus_routes_connectivity():
             pitch=2
         )
 
-    # Re-center the camera to the selected city when the button is pressed
+    # Button to re-center the camera
     if st.button("Re-center Camera"):
+        # Update the view state to the current city's coordinates
         st.session_state.view_state = pdk.ViewState(
             latitude=origin_lat,
             longitude=origin_lon,
@@ -227,6 +228,7 @@ def show_bus_routes_connectivity():
 - **🌐 Regional Disparities**: Cities in remote areas may have fewer connections, indicating potential gaps.
 """
     )
+
 
 
 
