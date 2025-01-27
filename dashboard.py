@@ -579,17 +579,18 @@ def show_introduction():
 
     st.sidebar.markdown(
         """
-        - **🚍 Bus Routes Connectivity**:  
+        - <span style='color: #FF4500;'>**🚍 Bus Routes Connectivity**</span>:  
           Explore how Israeli cities are connected by bus routes, with visualizations highlighting top routes and their frequency.
         
-        - **🚂 Train Status Analysis**:  
+        - <span style='color: #20B2AA;'>**🚂 Train Status Analysis**</span>:  
           Analyze train schedule adherence (on-time, delayed, or early departures) across various stations.
         
-        - **📈 Train Ridership Over Time**:  
+        - <span style='color: #6A5ACD;'>**📈 Train Ridership Over Time**</span>:  
           Investigate the impact of major events (e.g., COVID, war, repairs) on monthly train ridership trends.
         """,
         unsafe_allow_html=True
     )
+
 
 
 
