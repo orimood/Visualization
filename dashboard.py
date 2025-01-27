@@ -112,7 +112,24 @@ def show_bus_routes_connectivity():
         df_filtered = df[df["year"].isin(selected_years)]
 
         origin_cities = sorted(df_filtered["origin_yishuv_nm"].unique())
-        selected_origin = st.selectbox("Select Origin City:", origin_cities)
+
+        # Ensure the current city is remembered using session state
+        if "selected_city" not in st.session_state:
+            st.session_state.selected_city = origin_cities[0]  # Default to the first city
+
+        # Dropdown for selecting origin city
+        selected_origin = st.selectbox(
+            "Select Origin City:",
+            origin_cities,
+            index=origin_cities.index(st.session_state.selected_city)  # Select the stored city
+        )
+
+        # Button to re-select the current city
+        if st.button("Re-select Current City"):
+            st.session_state.selected_city = selected_origin
+
+    # Update the session state with the current selection
+    st.session_state.selected_city = selected_origin
 
     # Filter by chosen origin city
     df_city = df_filtered[df_filtered["origin_yishuv_nm"] == selected_origin]
@@ -155,16 +172,6 @@ def show_bus_routes_connectivity():
         zoom=10,
         pitch=2
     )
-
-    # Add a button to re-center the camera
-    if st.button("Re-center Camera"):
-        # Recreate the view state to re-center the map
-        view_state = pdk.ViewState(
-            latitude=origin_lat,
-            longitude=origin_lon,
-            zoom=10,
-            pitch=2
-        )
 
     # ArcLayer
     arc_layer = pdk.Layer(
@@ -225,6 +232,7 @@ def show_bus_routes_connectivity():
 - **🌐 Regional Disparities**: Cities in remote areas may have fewer connections, indicating potential gaps.
 """
     )
+
 
 
 
