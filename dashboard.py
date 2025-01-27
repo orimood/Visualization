@@ -159,41 +159,14 @@ def show_bus_routes_connectivity():
             pitch=2
         )
 
-    # Button to re-center the camera in the map
-    re_center_button = {
-        "html": f"""
-        <button onclick="window.location.reload();" style="
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background-color: #D2691E;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 8px 12px;
-            font-size: 14px;
-            cursor: pointer;
-        ">
-        Re-center Camera
-        </button>
-        """,
-        "style": {
-            "position": "absolute",
-            "top": "10px",
-            "left": "10px",
-        }
-    }
-
-    # Add the HTML button overlay
-    st.markdown(re_center_button["html"], unsafe_allow_html=True)
-
-    # Update the session state view state when city changes
-    st.session_state.view_state = pdk.ViewState(
-        latitude=origin_lat,
-        longitude=origin_lon,
-        zoom=10,
-        pitch=2
-    )
+    # Re-center button (placed above the map)
+    if st.button("Re-center Camera"):
+        st.session_state.view_state = pdk.ViewState(
+            latitude=origin_lat,
+            longitude=origin_lon,
+            zoom=10,
+            pitch=2
+        )
 
     # ArcLayer
     arc_layer = pdk.Layer(
@@ -241,7 +214,7 @@ def show_bus_routes_connectivity():
         }
     )
 
-    # Make the chart bigger by specifying a height
+    # Place the map
     st.pydeck_chart(deck, use_container_width=True)
 
     # Key Insights Section
@@ -254,6 +227,7 @@ def show_bus_routes_connectivity():
 - **🌐 Regional Disparities**: Cities in remote areas may have fewer connections, indicating potential gaps.
 """
     )
+
 
 
 
