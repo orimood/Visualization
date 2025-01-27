@@ -84,42 +84,58 @@ def load_train_data(csv_path="timetable_train_database_preproccesed.csv"):
 
 
 # 3) ------------- VISUALIZATION #1: BUS ROUTES CONNECTIVITY -------------
+import streamlit as st
+import pandas as pd
+import pydeck as pdk
+
+@st.cache_data
+def load_bus_data(folder_path="bus_data_splits"):
+    # Dummy function: Replace with your actual data-loading logic
+    return pd.DataFrame({
+        "origin_yishuv_nm": ["CityA", "CityB", "CityA", "CityB"],
+        "destination_yishuv_nm": ["CityB", "CityA", "CityC", "CityC"],
+        "lat_origin": [32.1, 32.2, 32.1, 32.2],
+        "lon_origin": [34.8, 34.9, 34.8, 34.9],
+        "lat_dest": [32.2, 32.1, 31.8, 31.8],
+        "lon_dest": [34.9, 34.8, 34.7, 34.7],
+        "year": [2023, 2023, 2024, 2024],
+        "trips_count": [100, 200, 50, 30]
+    })
+
 def show_bus_routes_connectivity():
     """
-    Displays the bus routes connectivity map using pydeck.
+    Displays the bus routes connectivity map using pydeck, 
+    and provides a button to re-center the camera to the current city's coordinates.
     """
-    # Research Question
     st.markdown("<h1 style='color: #D2691E;'>Israel Bus Routes Visualization 🚌</h1>", unsafe_allow_html=True)
     st.markdown(
         "### What are the most connected cities in Israel, and is there a strong dependency on specific transportation hubs?"
     )
 
-    # Load bus data once (cached)
-    df = load_bus_data("bus_data_splits")
+    # -- Load data (cached) --
+    df = load_bus_data()
 
-    # Filters for bus routes
     with st.expander("Filters (Bus Routes)", expanded=False):
         selected_years = st.multiselect(
             "Select Year(s):",
             sorted(df["year"].unique()),
-            default=df["year"].unique()
+            default=sorted(df["year"].unique())
         )
         if not selected_years:
             st.warning("Please select at least one year.")
             st.stop()
 
-        # Filter by selected years
+        # Filter by year
         df_filtered = df[df["year"].isin(selected_years)]
 
+        # City selection
         origin_cities = sorted(df_filtered["origin_yishuv_nm"].unique())
-
-        # Dropdown for selecting origin city
         selected_origin = st.selectbox("Select Origin City:", origin_cities)
 
-    # Filter by chosen origin city
+    # Filter by the chosen city
     df_city = df_filtered[df_filtered["origin_yishuv_nm"] == selected_origin]
 
-    # Group the filtered city data
+    # Group data
     df_city_grouped = (
         df_city.groupby(
             [
@@ -134,42 +150,59 @@ def show_bus_routes_connectivity():
         )["trips_count"].sum()
     )
 
-    # Choose top 15 routes
+    # Take the top 15 routes
     df_top15 = df_city_grouped.nlargest(15, "trips_count")
 
     if df_top15.empty:
         st.warning("No data available for this selection.")
         return
 
-    # Normalize trips_count for arc width
+    # Normalize trip counts for arc width
     df_top15["normalized_width"] = (
         df_top15["trips_count"] / df_top15["trips_count"].max() * 6
     )
 
-    # Coordinates of the selected origin city
+    # Coordinates for the origin city
     origin_lat = df_top15.iloc[0]["lat_origin"]
     origin_lon = df_top15.iloc[0]["lon_origin"]
 
-    # Initialize view state in session state for persistence
-    if "view_state" not in st.session_state:
-        st.session_state.view_state = pdk.ViewState(
-            latitude=origin_lat,
-            longitude=origin_lon,
-            zoom=10,
-            pitch=2
-        )
+    # 1) Initialize camera parameters in session_state, if not already
+    if "camera_lat" not in st.session_state:
+        st.session_state.camera_lat = origin_lat
+    if "camera_lon" not in st.session_state:
+        st.session_state.camera_lon = origin_lon
+    if "camera_zoom" not in st.session_state:
+        st.session_state.camera_zoom = 10
+    if "camera_pitch" not in st.session_state:
+        st.session_state.camera_pitch = 2
 
-    # Button to re-center the camera
+    # 2) Whenever the user selects a new city from the dropdown, 
+    #    we can automatically center on that city
+    #    OR we can let them click "Re-center" to do it manually.
+    #    Let's assume we ONLY re-center when they click the button:
+    #    so we won't auto-update these in real-time, unless you want to.
+    #    If you want auto-update, uncomment the lines below:
+    """
+    st.session_state.camera_lat = origin_lat
+    st.session_state.camera_lon = origin_lon
+    """
+
+    # 3) Button to manually re-center the camera
     if st.button("Re-center Camera"):
-        # Update the view state to the current city's coordinates
-        st.session_state.view_state = pdk.ViewState(
-            latitude=origin_lat,
-            longitude=origin_lon,
-            zoom=10,
-            pitch=2
-        )
+        st.session_state.camera_lat = origin_lat
+        st.session_state.camera_lon = origin_lon
+        st.session_state.camera_zoom = 10
+        st.session_state.camera_pitch = 2
 
-    # ArcLayer
+    # 4) Build the ViewState from the camera parameters in session_state
+    current_view_state = pdk.ViewState(
+        latitude=st.session_state.camera_lat,
+        longitude=st.session_state.camera_lon,
+        zoom=st.session_state.camera_zoom,
+        pitch=st.session_state.camera_pitch
+    )
+
+    # Define the layers
     arc_layer = pdk.Layer(
         "ArcLayer",
         data=df_top15,
@@ -178,33 +211,31 @@ def show_bus_routes_connectivity():
         get_width="normalized_width",
         get_source_color="[240, 59, 32, 200]",
         get_target_color="[189, 189, 189, 200]",
-        pickable=True
+        pickable=True,
     )
 
-    # Destination Layer
     destination_layer = pdk.Layer(
         "ScatterplotLayer",
         data=df_top15,
         get_position="[lon_dest, lat_dest]",
         get_radius=1000,
         get_fill_color="[49, 163, 84, 180]",
-        pickable=True
+        pickable=True,
     )
 
-    # Origin Layer
     origin_layer = pdk.Layer(
         "ScatterplotLayer",
         data=df_top15.head(1),
         get_position="[lon_origin, lat_origin]",
         get_radius=2000,
         get_fill_color="[117, 107, 177, 200]",
-        pickable=True
+        pickable=True,
     )
 
-    # Create the deck
+    # Build the deck
     deck = pdk.Deck(
         layers=[arc_layer, destination_layer, origin_layer],
-        initial_view_state=st.session_state.view_state,
+        initial_view_state=current_view_state,
         map_style="mapbox://styles/mapbox/dark-v10",
         tooltip={
             "html": (
@@ -212,22 +243,22 @@ def show_bus_routes_connectivity():
                 "<b>Destination:</b> {destination_yishuv_nm}<br/>"
                 "<b>Total Trips Count:</b> {trips_count}"
             )
-        }
+        },
     )
 
-    # Display the map
+    # 5) Render the chart
     st.pydeck_chart(deck, use_container_width=True)
 
-    # Key Insights Section
+    # Key insights
     st.markdown("<h2 style='color: #9ACD32;'>Key Insights for the Bus Routes Connectivity</h2>", unsafe_allow_html=True)
-    st.markdown(
-        """
+    st.markdown("""
 - **🧭 Identify Major Hubs**: Notice which origin cities frequently appear, indicating they're central hubs.
 - **📊 Observe Changes Over Years**: Switch between different years to see how some routes grow in importance or diminish.
 - **🚏 Potential Bottlenecks**: Very thick arcs may suggest routes that need increased service to handle demand.
 - **🌐 Regional Disparities**: Cities in remote areas may have fewer connections, indicating potential gaps.
-"""
-    )
+""")
+
+
 
 
 
