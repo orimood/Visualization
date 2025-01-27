@@ -113,23 +113,8 @@ def show_bus_routes_connectivity():
 
         origin_cities = sorted(df_filtered["origin_yishuv_nm"].unique())
 
-        # Ensure the current city is remembered using session state
-        if "selected_city" not in st.session_state:
-            st.session_state.selected_city = origin_cities[0]  # Default to the first city
-
         # Dropdown for selecting origin city
-        selected_origin = st.selectbox(
-            "Select Origin City:",
-            origin_cities,
-            index=origin_cities.index(st.session_state.selected_city)  # Select the stored city
-        )
-
-        # Button to re-select the current city
-        if st.button("Re-select Current City"):
-            st.session_state.selected_city = selected_origin
-
-    # Update the session state with the current selection
-    st.session_state.selected_city = selected_origin
+        selected_origin = st.selectbox("Select Origin City:", origin_cities)
 
     # Filter by chosen origin city
     df_city = df_filtered[df_filtered["origin_yishuv_nm"] == selected_origin]
@@ -158,15 +143,52 @@ def show_bus_routes_connectivity():
 
     # Normalize trips_count for arc width
     df_top15["normalized_width"] = (
-            df_top15["trips_count"] / df_top15["trips_count"].max() * 6
+        df_top15["trips_count"] / df_top15["trips_count"].max() * 6
     )
 
     # Coordinates of the selected origin city
     origin_lat = df_top15.iloc[0]["lat_origin"]
     origin_lon = df_top15.iloc[0]["lon_origin"]
 
-    # View State for the map
-    view_state = pdk.ViewState(
+    # Initialize view state in session state for persistence
+    if "view_state" not in st.session_state:
+        st.session_state.view_state = pdk.ViewState(
+            latitude=origin_lat,
+            longitude=origin_lon,
+            zoom=10,
+            pitch=2
+        )
+
+    # Button to re-center the camera in the map
+    re_center_button = {
+        "html": f"""
+        <button onclick="window.location.reload();" style="
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #D2691E;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-size: 14px;
+            cursor: pointer;
+        ">
+        Re-center Camera
+        </button>
+        """,
+        "style": {
+            "position": "absolute",
+            "top": "10px",
+            "left": "10px",
+        }
+    }
+
+    # Add the HTML button overlay
+    st.markdown(re_center_button["html"], unsafe_allow_html=True)
+
+    # Update the session state view state when city changes
+    st.session_state.view_state = pdk.ViewState(
         latitude=origin_lat,
         longitude=origin_lon,
         zoom=10,
@@ -208,7 +230,7 @@ def show_bus_routes_connectivity():
     # Create the deck
     deck = pdk.Deck(
         layers=[arc_layer, destination_layer, origin_layer],
-        initial_view_state=view_state,
+        initial_view_state=st.session_state.view_state,
         map_style="mapbox://styles/mapbox/dark-v10",
         tooltip={
             "html": (
@@ -232,8 +254,6 @@ def show_bus_routes_connectivity():
 - **🌐 Regional Disparities**: Cities in remote areas may have fewer connections, indicating potential gaps.
 """
     )
-
-
 
 
 
