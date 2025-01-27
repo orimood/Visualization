@@ -569,7 +569,7 @@ def show_introduction():
                 <li>📈 Analyzing the impact of significant events (e.g., COVID, war) on train ridership over time.</li>
             </ul>
         </div>
-
+        
         <div style='background-color: #353535; padding: 20px; margin-top: 20px; border-radius: 10px;'>
             <h2 style='color: #e84393;'>📊 Interesting Statistics</h2>
             <ul style='color: #f0f0f0;'>
@@ -577,9 +577,11 @@ def show_introduction():
                 <li><strong>Most Connected Cities:</strong> Tel Aviv, Haifa, and Jerusalem are among the most connected urban centers.</li>
                 <li><strong>Top Bus Route:</strong> The route between Tel Aviv and Haifa has the highest number of trips recorded.</li>
                 <li><strong>Train Data:</strong> 10,366 records spanning 2015 to the present, with detailed train statuses (on-time, delayed, early).</li>
-                <li><strong>Delay Insights:</strong> Central stations like Tel Aviv and Jerusalem show recurring delays during peak hours.</li>
+                <li><strong>Punctuality:</strong> 88.14% of all trains were on time, showcasing strong schedule adherence overall.</li>
+                <li><strong>Top Delayed Stations:</strong> Tel Aviv HaHagana, HaShalom, and Merkaz, with over 75,000 delays combined.</li>
             </ul>
         </div>
+
 
         <div style='background-color: #222f3e; padding: 20px; margin-top: 20px; border-radius: 10px;'>
             <h2 style='color: #6c5ce7;'>📖 Data Overview</h2>
