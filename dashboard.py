@@ -404,7 +404,7 @@ def show_train_ridership_events():
         )
 
     # Display event descriptions
-    st.markdown("<h3 style='color: #696969;'>Event Descriptions</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='color: #BB86FC;'>Event Descriptions</h3>", unsafe_allow_html=True)
     if selected_city == "All":
         station_description = "All train stations are included."
     else:
