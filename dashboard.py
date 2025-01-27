@@ -148,18 +148,18 @@ def show_bus_routes_connectivity():
     origin_lat = df_top15.iloc[0]["lat_origin"]
     origin_lon = df_top15.iloc[0]["lon_origin"]
 
-    # Initialize the view state
-    if "view_state" not in st.session_state:
-        st.session_state.view_state = pdk.ViewState(
-            latitude=origin_lat,
-            longitude=origin_lon,
-            zoom=10,
-            pitch=2
-        )
+    # View State for the map
+    view_state = pdk.ViewState(
+        latitude=origin_lat,
+        longitude=origin_lon,
+        zoom=10,
+        pitch=2
+    )
 
-    # Button to re-center the camera
+    # Add a button to re-center the camera
     if st.button("Re-center Camera"):
-        st.session_state.view_state = pdk.ViewState(
+        # Recreate the view state to re-center the map
+        view_state = pdk.ViewState(
             latitude=origin_lat,
             longitude=origin_lon,
             zoom=10,
@@ -201,7 +201,7 @@ def show_bus_routes_connectivity():
     # Create the deck
     deck = pdk.Deck(
         layers=[arc_layer, destination_layer, origin_layer],
-        initial_view_state=st.session_state.view_state,
+        initial_view_state=view_state,
         map_style="mapbox://styles/mapbox/dark-v10",
         tooltip={
             "html": (
@@ -225,6 +225,7 @@ def show_bus_routes_connectivity():
 - **🌐 Regional Disparities**: Cities in remote areas may have fewer connections, indicating potential gaps.
 """
     )
+
 
 
 
