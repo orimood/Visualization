@@ -141,17 +141,24 @@ def show_bus_routes_connectivity():
 
     # Normalize trips_count for arc width
     df_top15["normalized_width"] = (
-            df_top15["trips_count"] / df_top15["trips_count"].max() * 6
+        df_top15["trips_count"] / df_top15["trips_count"].max() * 6
     )
 
-    # Coordinates of the selected origin city
+    # Get coordinates of the selected origin city
     origin_lat = df_top15.iloc[0]["lat_origin"]
     origin_lon = df_top15.iloc[0]["lon_origin"]
 
+    # Re-center button
+    if st.button("Re-center on Selected City"):
+        st.session_state['map_center'] = (origin_lat, origin_lon)
+    
+    # Check if map_center exists in session_state, else default
+    center_lat, center_lon = st.session_state.get('map_center', (origin_lat, origin_lon))
+
     # Define the view state
     view_state = pdk.ViewState(
-        latitude=origin_lat,
-        longitude=origin_lon,
+        latitude=center_lat,
+        longitude=center_lon,
         zoom=10,
         pitch=2
     )
@@ -215,7 +222,6 @@ def show_bus_routes_connectivity():
 - **🌐 Regional Disparities**: Cities in remote areas may have fewer connections, indicating potential gaps.
 """
     )
-
 
 
 
