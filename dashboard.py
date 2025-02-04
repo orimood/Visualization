@@ -10,7 +10,7 @@ import calendar
 # Configure page layout
 st.set_page_config(layout="wide")
 
-# Apply custom styles for dark mode and wider sidebar
+# Apply custom styles for dark mode, top bar, and sidebar
 st.markdown(
     """
     <style>
@@ -66,14 +66,34 @@ st.markdown(
         color: white !important;
         border-radius: 8px !important;
     }
+
+    /* ====== Dark Mode for Top Navigation Bar ====== */
+    header[data-testid="stHeader"] {
+        background-color: #1c1f26 !important;
+        color: white !important;
+    }
+
+    /* Change the page selector dropdown (inside sidebar) */
+    [data-testid="stSelectbox"] {
+        background-color: #1c1f26 !important;
+        color: white !important;
+    }
+    
+    /* Change the selected option inside dropdown */
+    [data-testid="stSelectbox"] div {
+        background-color: #1c1f26 !important;
+        color: white !important;
+    }
+
+    /* Hide the Streamlit default menu (optional) */
+    [data-testid="stToolbar"] {
+        visibility: hidden;
+    }
+
     </style>
     """,
     unsafe_allow_html=True
 )
-
-
-
-
 
 
 
