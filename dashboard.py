@@ -7,32 +7,70 @@ import matplotlib.pyplot as plt
 import calendar
 
 # 1) ------------ CONFIGURE PAGE + WIDER SIDEBAR -------------
-# Automatically use wide layout
+# Configure page layout
 st.set_page_config(layout="wide")
 
+# Apply custom styles for dark mode and wider sidebar
 st.markdown(
     """
     <style>
+    /* Force dark mode */
+    html, body, [data-testid="stAppViewContainer"] {
+        background-color: #0e1117 !important;
+        color: white !important;
+    }
+
+    /* Customize text color */
+    h1, h2, h3, h4, h5, h6, p, label, div {
+        color: white !important;
+    }
+
+    /* Customize sidebar */
+    [data-testid="stSidebar"] {
+        background-color: #1c1f26 !important;
+        color: white !important;
+    }
+
+    /* Sidebar text */
+    [data-testid="stSidebar"] div {
+        color: white !important;
+    }
+
     /* Main content container */
     [data-testid="stAppViewContainer"] {
-        transition: margin-left 0.3s ease; /* Smooth transition when sidebar is toggled */
+        transition: margin-left 0.3s ease;
     }
 
     /* Apply centered alignment when sidebar is collapsed */
     [data-testid="collapsedSidebar"] + div [data-testid="stAppViewContainer"] {
         margin-left: auto;
         margin-right: auto;
-        max-width: 80%; /* Limit the width for better centering */
+        max-width: 80%;
     }
 
     /* Ensure charts are centered */
     [data-testid="stChart"] {
-        margin: 0 auto; /* Center align charts */
+        margin: 0 auto;
+    }
+
+    /* Customize input fields */
+    input, textarea, select {
+        background-color: #262730 !important;
+        color: white !important;
+        border-color: white !important;
+    }
+
+    /* Customize buttons */
+    button {
+        background-color: #1f77b4 !important;
+        color: white !important;
+        border-radius: 8px !important;
     }
     </style>
     """,
     unsafe_allow_html=True
 )
+
 
 
 
