@@ -90,7 +90,95 @@ st.markdown(
         visibility: hidden;
     }
 
-    </style>
+    /* Make multi-select dropdown dark */
+    [data-testid="stMultiSelect"] div, 
+    [data-testid="stMultiSelect"] input, 
+    [data-testid="stMultiSelect"] {
+        background-color: #262730 !important;
+        color: white !important;
+        border-color: white !important;
+    }
+
+    /* Make Streamlit data tables dark */
+    [data-testid="stDataFrame"] {
+        background-color: #262730 !important;
+        color: white !important;
+    }
+
+    /* Make text input fields dark */
+    [data-baseweb="input"] {
+        background-color: #262730 !important;
+        color: white !important;
+        border-color: white !important;
+    }
+
+    /* Make sidebar dropdown (multi-option select) dark */
+    [data-baseweb="select"] {
+        background-color: #1c1f26 !important;
+        color: white !important;
+    }
+
+    /* Change color of error messages */
+    [data-testid="stWarning"] {
+        background-color: #703d38 !important;
+        color: white !important;
+        border: 1px solid white !important;
+    }
+
+    /* Change color of success messages */
+    [data-testid="stSuccess"] {
+        background-color: #2e8b57 !important;
+        color: white !important;
+        border: 1px solid white !important;
+    }
+
+    /* Change color of info messages */
+    [data-testid="stInfo"] {
+        background-color: #1e90ff !important;
+        color: white !important;
+        border: 1px solid white !important;
+    }
+
+    /* Style for warning and error messages */
+    [data-testid="stError"] {
+        background-color: #a94442 !important;
+        color: white !important;
+        border: 1px solid white !important;
+    }
+
+    /* Make Streamlit expander headers dark */
+    [data-testid="stExpander"] {
+        background-color: #1c1f26 !important;
+        color: white !important;
+        border: 1px solid white !important;
+    }
+
+    /* Make select dropdown items dark */
+    [data-testid="stDropdownItem"] {
+        background-color: #1c1f26 !important;
+        color: white !important;
+    }
+
+    /* Make radio button background match dark theme */
+    [data-testid="stRadio"] label {
+        color: white !important;
+    }
+
+    /* Style checkboxes to fit dark theme */
+    [data-testid="stCheckbox"] label {
+        color: white !important;
+    }
+
+    /* Adjust text alignment for better readability */
+    [data-testid="stText"] {
+        text-align: left !important;
+    }
+
+    /* Improve spacing for input fields */
+    [data-testid="stTextInput"] {
+        padding: 10px !important;
+    }
+</style>
     """,
     unsafe_allow_html=True
 )
