@@ -6,88 +6,89 @@ import plotly.express as px
 import matplotlib.pyplot as plt
 import calendar
 
-# ---------------- CONFIGURE PAGE ----------------
+# 1) ------------ CONFIGURE PAGE + WIDER SIDEBAR -------------
+# Configure page layout
 st.set_page_config(layout="wide")
 
-# ---------------- SETTINGS BUTTON: MODE TOGGLE ----------------
-if "theme_mode" not in st.session_state:
-    st.session_state["theme_mode"] = "Dark Mode"  # Default theme
-
-# ---------------- APPLY STYLES BASED ON MODE ----------------
-if st.session_state["theme_mode"] == "Dark Mode":
-    theme_css = """
-        <style>
-            /* 🌙 Dark Mode Styles */
-            html, body, [data-testid="stAppViewContainer"] {
-                background-color: #0e1117 !important;
-                color: white !important;
-            }
-            h1, h2, h3, h4, h5, h6, p, label, div {
-                color: white !important;
-            }
-            [data-testid="stSidebar"] {
-                background-color: #1c1f26 !important;
-                color: white !important;
-            }
-            [data-testid="stSelectbox"], [data-testid="stMultiSelect"] div, input, textarea, select {
-                background-color: #262730 !important;
-                color: white !important;
-                border-color: white !important;
-            }
-            button {
-                background-color: #1f77b4 !important;
-                color: white !important;
-                border-radius: 8px !important;
-            }
-            [data-testid="stDataFrame"] {
-                background-color: #262730 !important;
-                color: white !important;
-            }
-            [data-testid="stExpander"] {
-                background-color: #1c1f26 !important;
-                color: white !important;
-                border: 1px solid white !important;
-            }
-        </style>
+# Apply custom styles for dark mode, top bar, and sidebar
+st.markdown(
     """
-else:
-    theme_css = """
-        <style>
-            /* ☀️ Light Mode Styles */
-            html, body, [data-testid="stAppViewContainer"] {
-                background-color: white !important;
-                color: black !important;
-            }
-            h1, h2, h3, h4, h5, h6, p, label, div {
-                color: black !important;
-            }
-            [data-testid="stSidebar"] {
-                background-color: #f5f5f5 !important;
-                color: black !important;
-            }
-            [data-testid="stSelectbox"], [data-testid="stMultiSelect"] div, input, textarea, select {
-                background-color: white !important;
-                color: black !important;
-                border-color: black !important;
-            }
-            button {
-                background-color: #007BFF !important;
-                color: white !important;
-                border-radius: 8px !important;
-            }
-            [data-testid="stDataFrame"] {
-                background-color: white !important;
-                color: black !important;
-            }
-            [data-testid="stExpander"] {
-                background-color: #f5f5f5 !important;
-                color: black !important;
-                border: 1px solid black !important;
-            }
-        </style>
-    """
+    <style>
+    /* Force dark mode */
+    html, body, [data-testid="stAppViewContainer"] {
+        background-color: #0e1117 !important;
+        color: white !important;
+    }
 
-st.markdown(theme_css, unsafe_allow_html=True)
+    /* Customize text color */
+    h1, h2, h3, h4, h5, h6, p, label, div {
+        color: white !important;
+    }
+
+    /* Customize sidebar */
+    [data-testid="stSidebar"] {
+        background-color: #1c1f26 !important;
+        color: white !important;
+    }
+
+    /* Sidebar text */
+    [data-testid="stSidebar"] div {
+        color: white !important;
+    }
+
+    /* Main content container */
+    [data-testid="stAppViewContainer"] {
+        transition: margin-left 0.3s ease;
+    }
+
+    /* Apply centered alignment when sidebar is collapsed */
+    [data-testid="collapsedSidebar"] + div [data-testid="stAppViewContainer"] {
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 80%;
+    }
+
+    /* Ensure charts are centered */
+    [data-testid="stChart"] {
+        margin: 0 auto;
+    }
+
+    /* Customize input fields */
+    input, textarea, select {
+        background-color: #262730 !important;
+        color: white !important;
+        border-color: white !important;
+    }
+
+    /* Customize buttons */
+    button {
+        background-color: #1f77b4 !important;
+        color: white !important;
+        border-radius: 8px !important;
+    }
+
+    /* ====== Dark Mode for Top Navigation Bar ====== */
+    header[data-testid="stHeader"] {
+        background-color: #1c1f26 !important;
+        color: white !important;
+    }
+
+    /* Change the page selector dropdown (inside sidebar) */
+    [data-testid="stSelectbox"] {
+        background-color: #1c1f26 !important;
+        color: white !important;
+    }
+    
+    /* Change the selected option inside dropdown */
+    [data-testid="stSelectbox"] div {
+        background-color: #1c1f26 !important;
+        color: white !important;
+    }
+
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 
 # 2) ------------- CACHING / LOAD DATA FUNCTIONS -------------
