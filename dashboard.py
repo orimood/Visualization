@@ -6,186 +6,94 @@ import plotly.express as px
 import matplotlib.pyplot as plt
 import calendar
 
-# 1) ------------ CONFIGURE PAGE + WIDER SIDEBAR -------------
-# Configure page layout
+# ---------------- CONFIGURE PAGE ----------------
 st.set_page_config(layout="wide")
 
+# ---------------- SETTINGS BUTTON: MODE TOGGLE ----------------
 if "theme_mode" not in st.session_state:
-    st.session_state["theme_mode"] = "Dark Mode"  # Default to Dark Mode
+    st.session_state["theme_mode"] = "Dark Mode"  # Default theme
 
-# Apply custom styles for dark mode, top bar, and sidebar
-st.markdown(
+with st.sidebar.expander("⚙️ Settings", expanded=False):
+    mode = st.radio("Select Theme Mode:", ["Dark Mode", "Light Mode"], index=0 if st.session_state["theme_mode"] == "Dark Mode" else 1)
+    if mode != st.session_state["theme_mode"]:
+        st.session_state["theme_mode"] = mode
+        st.experimental_rerun()  # Refresh the page when mode changes
+
+# ---------------- APPLY STYLES BASED ON MODE ----------------
+if st.session_state["theme_mode"] == "Dark Mode":
+    theme_css = """
+        <style>
+            /* 🌙 Dark Mode Styles */
+            html, body, [data-testid="stAppViewContainer"] {
+                background-color: #0e1117 !important;
+                color: white !important;
+            }
+            h1, h2, h3, h4, h5, h6, p, label, div {
+                color: white !important;
+            }
+            [data-testid="stSidebar"] {
+                background-color: #1c1f26 !important;
+                color: white !important;
+            }
+            [data-testid="stSelectbox"], [data-testid="stMultiSelect"] div, input, textarea, select {
+                background-color: #262730 !important;
+                color: white !important;
+                border-color: white !important;
+            }
+            button {
+                background-color: #1f77b4 !important;
+                color: white !important;
+                border-radius: 8px !important;
+            }
+            [data-testid="stDataFrame"] {
+                background-color: #262730 !important;
+                color: white !important;
+            }
+            [data-testid="stExpander"] {
+                background-color: #1c1f26 !important;
+                color: white !important;
+                border: 1px solid white !important;
+            }
+        </style>
     """
-    <style>
-    /* Force dark mode */
-    html, body, [data-testid="stAppViewContainer"] {
-        background-color: #0e1117 !important;
-        color: white !important;
-    }
+else:
+    theme_css = """
+        <style>
+            /* ☀️ Light Mode Styles */
+            html, body, [data-testid="stAppViewContainer"] {
+                background-color: white !important;
+                color: black !important;
+            }
+            h1, h2, h3, h4, h5, h6, p, label, div {
+                color: black !important;
+            }
+            [data-testid="stSidebar"] {
+                background-color: #f5f5f5 !important;
+                color: black !important;
+            }
+            [data-testid="stSelectbox"], [data-testid="stMultiSelect"] div, input, textarea, select {
+                background-color: white !important;
+                color: black !important;
+                border-color: black !important;
+            }
+            button {
+                background-color: #007BFF !important;
+                color: white !important;
+                border-radius: 8px !important;
+            }
+            [data-testid="stDataFrame"] {
+                background-color: white !important;
+                color: black !important;
+            }
+            [data-testid="stExpander"] {
+                background-color: #f5f5f5 !important;
+                color: black !important;
+                border: 1px solid black !important;
+            }
+        </style>
+    """
 
-    /* Customize text color */
-    h1, h2, h3, h4, h5, h6, p, label, div {
-        color: white !important;
-    }
-
-    /* Customize sidebar */
-    [data-testid="stSidebar"] {
-        background-color: #1c1f26 !important;
-        color: white !important;
-    }
-
-    /* Sidebar text */
-    [data-testid="stSidebar"] div {
-        color: white !important;
-    }
-
-    /* Main content container */
-    [data-testid="stAppViewContainer"] {
-        transition: margin-left 0.3s ease;
-    }
-
-    /* Apply centered alignment when sidebar is collapsed */
-    [data-testid="collapsedSidebar"] + div [data-testid="stAppViewContainer"] {
-        margin-left: auto;
-        margin-right: auto;
-        max-width: 80%;
-    }
-
-    /* Ensure charts are centered */
-    [data-testid="stChart"] {
-        margin: 0 auto;
-    }
-
-    /* Customize input fields */
-    input, textarea, select {
-        background-color: #262730 !important;
-        color: white !important;
-        border-color: white !important;
-    }
-
-    /* Customize buttons */
-    button {
-        background-color: #1f77b4 !important;
-        color: white !important;
-        border-radius: 8px !important;
-    }
-
-    /* ====== Dark Mode for Top Navigation Bar ====== */
-    header[data-testid="stHeader"] {
-        background-color: #1c1f26 !important;
-        color: white !important;
-    }
-
-    /* Change the page selector dropdown (inside sidebar) */
-    [data-testid="stSelectbox"] {
-        background-color: #1c1f26 !important;
-        color: white !important;
-    }
-    
-    /* Change the selected option inside dropdown */
-    [data-testid="stSelectbox"] div {
-        background-color: #1c1f26 !important;
-        color: white !important;
-    }
-
-    /* Hide the Streamlit default menu (optional) */
-    [data-testid="stToolbar"] {
-        visibility: hidden;
-    }
-
-    /* Make multi-select dropdown dark */
-    [data-testid="stMultiSelect"] div, 
-    [data-testid="stMultiSelect"] input, 
-    [data-testid="stMultiSelect"] {
-        background-color: #262730 !important;
-        color: white !important;
-        border-color: white !important;
-    }
-
-    /* Make Streamlit data tables dark */
-    [data-testid="stDataFrame"] {
-        background-color: #262730 !important;
-        color: white !important;
-    }
-
-    /* Make text input fields dark */
-    [data-baseweb="input"] {
-        background-color: #262730 !important;
-        color: white !important;
-        border-color: white !important;
-    }
-
-    /* Make sidebar dropdown (multi-option select) dark */
-    [data-baseweb="select"] {
-        background-color: #1c1f26 !important;
-        color: white !important;
-    }
-
-    /* Change color of error messages */
-    [data-testid="stWarning"] {
-        background-color: #703d38 !important;
-        color: white !important;
-        border: 1px solid white !important;
-    }
-
-    /* Change color of success messages */
-    [data-testid="stSuccess"] {
-        background-color: #2e8b57 !important;
-        color: white !important;
-        border: 1px solid white !important;
-    }
-
-    /* Change color of info messages */
-    [data-testid="stInfo"] {
-        background-color: #1e90ff !important;
-        color: white !important;
-        border: 1px solid white !important;
-    }
-
-    /* Style for warning and error messages */
-    [data-testid="stError"] {
-        background-color: #a94442 !important;
-        color: white !important;
-        border: 1px solid white !important;
-    }
-
-    /* Make Streamlit expander headers dark */
-    [data-testid="stExpander"] {
-        background-color: #1c1f26 !important;
-        color: white !important;
-        border: 1px solid white !important;
-    }
-
-    /* Make select dropdown items dark */
-    [data-testid="stDropdownItem"] {
-        background-color: #1c1f26 !important;
-        color: white !important;
-    }
-
-    /* Make radio button background match dark theme */
-    [data-testid="stRadio"] label {
-        color: white !important;
-    }
-
-    /* Style checkboxes to fit dark theme */
-    [data-testid="stCheckbox"] label {
-        color: white !important;
-    }
-
-    /* Adjust text alignment for better readability */
-    [data-testid="stText"] {
-        text-align: left !important;
-    }
-
-    /* Improve spacing for input fields */
-    [data-testid="stTextInput"] {
-        padding: 10px !important;
-    }
-</style>
-    """,
-    unsafe_allow_html=True
-)
-
+st.markdown(theme_css, unsafe_allow_html=True)
 
 
 # 2) ------------- CACHING / LOAD DATA FUNCTIONS -------------
