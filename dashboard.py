@@ -13,12 +13,6 @@ st.set_page_config(layout="wide")
 if "theme_mode" not in st.session_state:
     st.session_state["theme_mode"] = "Dark Mode"  # Default theme
 
-with st.sidebar.expander("⚙️ Settings", expanded=False):
-    mode = st.radio("Select Theme Mode:", ["Dark Mode", "Light Mode"], index=0 if st.session_state["theme_mode"] == "Dark Mode" else 1)
-    if mode != st.session_state["theme_mode"]:
-        st.session_state["theme_mode"] = mode
-        st.experimental_rerun()  # Refresh the page when mode changes
-
 # ---------------- APPLY STYLES BASED ON MODE ----------------
 if st.session_state["theme_mode"] == "Dark Mode":
     theme_css = """
