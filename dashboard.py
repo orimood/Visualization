@@ -10,6 +10,9 @@ import calendar
 # Configure page layout
 st.set_page_config(layout="wide")
 
+if "theme_mode" not in st.session_state:
+    st.session_state["theme_mode"] = "Dark Mode"  # Default to Dark Mode
+
 # Apply custom styles for dark mode, top bar, and sidebar
 st.markdown(
     """
